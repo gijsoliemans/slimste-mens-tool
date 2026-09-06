@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Quizmaster — 12 hints, 3 antwoorden</title>
+<link rel="stylesheet" href="/base.css">
+<link rel="stylesheet" href="/app.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎙️</text></svg>">
+</head>
+<body>
+
+<!-- ============ Inloggen ============ -->
+<section id="view-login" class="view login-view">
+  <div class="login-card">
+    <h1>Quizmaster</h1>
+    <p class="muted">12 hints, 3 antwoorden</p>
+    <form id="login-form" autocomplete="off">
+      <label for="login-password">Hostwachtwoord</label>
+      <input id="login-password" type="password" autocomplete="current-password">
+      <button class="btn-primary" type="submit" style="width:100%;margin-top:.8rem">Inloggen</button>
+    </form>
+    <p id="login-error" class="login-error" role="alert"></p>
+    <p class="faint small">Het wachtwoord staat in de terminal waar de server gestart is.</p>
+  </div>
+</section>
+
+<!-- ============ Overzicht ============ -->
+<section id="view-list" class="view hidden">
+  <header class="appbar">
+    <h1 class="brand">🎙️ Quizmaster</h1>
+    <div class="spacer"></div>
+    <button id="btn-new" class="btn-primary">+ Nieuwe puzzel</button>
+    <button id="btn-import" class="btn-ghost">Importeren</button>
+    <button id="btn-export" class="btn-ghost">Exporteren</button>
+    <button id="btn-settings" class="btn-ghost">Instellingen</button>
+    <button id="btn-logout" class="btn-ghost">Uitloggen</button>
+  </header>
+
+  <div id="active-sessions" class="active-sessions"></div>
+
+  <div class="list-toolbar">
+    <input id="search" type="search" placeholder="Zoek op titel, hint of antwoord…" aria-label="Zoeken">
+    <select id="tag-filter" aria-label="Filter op tag"><option value="">Alle tags</option></select>
+    <select id="status-filter" aria-label="Filter op status">
+      <option value="">Alles</option>
+      <option value="complete">Speelklaar</option>
+      <option value="draft">Concept</option>
+    </select>
+  </div>
+
+  <div id="puzzle-list" class="puzzle-list"></div>
+  <p id="list-empty" class="empty hidden">Nog geen puzzels. Maak er een met “Nieuwe puzzel”.</p>
+</section>
+
+<!-- ============ Editor ============ -->
+<section id="view-editor" class="view hidden">
+  <header class="appbar">
+    <button id="editor-back" class="btn-ghost">← Terug</button>
+    <h1 class="brand" id="editor-title-label">Puzzel bewerken</h1>
+    <div class="spacer"></div>
+    <span id="editor-status" class="editor-status"></span>
+    <button id="btn-preview" class="btn-ghost">Voorbeeld speler</button>
+    <button id="btn-save-draft" class="btn-ghost">Opslaan als concept</button>
+    <button id="btn-save" class="btn-primary">Opslaan</button>
+  </header>
+
+  <div class="editor-body">
+    <div class="editor-meta">
+      <div class="field">
+        <label for="p-title">Titel</label>
+        <input id="p-title" type="text" placeholder="Kerstpuzzel 2026">
+      </div>
+      <div class="field">
+        <label for="p-tags">Tags of set, gescheiden door komma's</label>
+        <input id="p-tags" type="text" placeholder="kerstavond, geschiedenis">
+      </div>
+      <div class="field field-wide">
+        <label for="p-notes">Notitie voor jezelf (niet zichtbaar voor de speler)</label>
+        <textarea id="p-notes" placeholder="Bijvoorbeeld: derde antwoord is lastig, geef eventueel een duwtje."></textarea>
+      </div>
+    </div>
+
+    <div id="validation" class="validation"></div>
+
+    <div id="answer-blocks" class="answer-blocks"></div>
+
+    <p class="faint small hint-drag-help">
+      Sleep hints tussen antwoorden, of gebruik de pijltjesknoppen op de hint.
+    </p>
+  </div>
+</section>
+
+<!-- ============ Sessie starten ============ -->
+<div id="modal-start" class="modal hidden">
+  <div class="modal-card">
+    <h2>Sessie starten</h2>
+    <p class="muted" id="start-puzzle-title"></p>
+    <div class="settings-grid">
+      <div class="field">
+        <label for="s-total">Totale tijd (seconden)</label>
+        <input id="s-total" type="number" min="5" max="3600" value="60">
+      </div>
+      <div class="field">
+        <label for="s-bonus">Tijdbonus per goed antwoord (s)</label>
+        <input id="s-bonus" type="number" min="0" max="600" value="0">
+      </div>
+      <div class="field">
+        <label for="s-penalty">Straftijd per fout antwoord (s)</label>
+        <input id="s-penalty" type="number" min="0" max="600" value="0">
+      </div>
+      <div class="field">
+        <label for="s-shuffle">Volgorde van de hints</label>
+        <select id="s-shuffle">
+          <option value="1">Geschud (aanbevolen)</option>
+          <option value="0">Zoals ingevoerd</option>
+        </select>
+      </div>
+    </div>
+    <label class="checkline"><input type="checkbox" id="s-save-defaults"> Onthoud dit als standaard</label>
+    <div class="modal-actions">
+      <button class="btn-ghost" data-close-modal>Annuleren</button>
+      <button id="start-confirm" class="btn-primary">Sessie starten</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Instellingen ============ -->
+<div id="modal-settings" class="modal hidden">
+  <div class="modal-card">
+    <h2>Instellingen</h2>
+    <h3 class="sub">Standaardwaarden voor nieuwe sessies</h3>
+    <div class="settings-grid">
+      <div class="field"><label for="d-total">Totale tijd (s)</label><input id="d-total" type="number" min="5" max="3600"></div>
+      <div class="field"><label for="d-bonus">Tijdbonus (s)</label><input id="d-bonus" type="number" min="0" max="600"></div>
+      <div class="field"><label for="d-penalty">Straftijd (s)</label><input id="d-penalty" type="number" min="0" max="600"></div>
+      <div class="field"><label for="d-shuffle">Hintvolgorde</label>
+        <select id="d-shuffle"><option value="1">Geschud</option><option value="0">Zoals ingevoerd</option></select>
+      </div>
+    </div>
+    <h3 class="sub">Hostwachtwoord wijzigen</h3>
+    <div class="field"><label for="d-password">Nieuw wachtwoord (minstens 6 tekens)</label><input id="d-password" type="password" autocomplete="new-password"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" data-close-modal>Sluiten</button>
+      <button id="settings-save" class="btn-primary">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Voorbeeld speler ============ -->
+<div id="modal-preview" class="modal hidden">
+  <div class="modal-card modal-wide">
+    <h2>Zo ziet de speler het</h2>
+    <p class="muted small">Alleen de twaalf hints, in willekeurige volgorde. Geen groepering, geen kleuren.</p>
+    <div id="preview-tiles" class="preview-tiles"></div>
+    <div class="modal-actions">
+      <button id="preview-reshuffle" class="btn-ghost">Opnieuw schudden</button>
+      <button class="btn-primary" data-close-modal>Sluiten</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Volgende puzzel ============ -->
+<div id="modal-next" class="modal hidden">
+  <div class="modal-card">
+    <h2>Volgende puzzel</h2>
+    <p class="muted small">De speler houdt dezelfde link. Kies de volgende speelklare puzzel.</p>
+    <div class="field"><label for="next-puzzle">Puzzel</label><select id="next-puzzle"></select></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" data-close-modal>Annuleren</button>
+      <button id="next-confirm" class="btn-primary">Starten</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Live sessie ============ -->
+<section id="view-live" class="view hidden">
+  <header class="appbar live-appbar">
+    <button id="live-back" class="btn-ghost">← Overzicht</button>
+    <h1 class="brand" id="live-title">Puzzel</h1>
+    <div class="spacer"></div>
+    <div class="player-link">
+      <span class="faint small">Spelerscode</span>
+      <strong id="live-code" class="code">------</strong>
+      <button id="copy-link" class="btn-ghost btn-sm">Kopieer link</button>
+      <button id="open-player" class="btn-ghost btn-sm">Open</button>
+      <span id="player-count" class="tag">0 kijkers</span>
+    </div>
+  </header>
+
+  <div class="live-body">
+    <aside class="control-panel">
+      <div class="clock-box">
+        <div id="live-clock" class="clock live-clock">1:00</div>
+        <div id="live-status" class="muted small">Klaar om te beginnen</div>
+      </div>
+      <div class="clock-buttons">
+        <button id="btn-start" class="btn-primary">▶ Start</button>
+        <button id="btn-pause" class="btn-ghost">⏸ Pauze</button>
+        <button id="btn-reset" class="btn-ghost">↺ Reset</button>
+      </div>
+      <div class="time-adjust">
+        <button class="btn-ghost btn-sm" data-time="-10">−10s</button>
+        <button class="btn-ghost btn-sm" data-time="-5">−5s</button>
+        <button class="btn-ghost btn-sm" data-time="5">+5s</button>
+        <button class="btn-ghost btn-sm" data-time="10">+10s</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <button id="btn-wrong" class="btn-bad wide">✗ Fout antwoord</button>
+      <button id="btn-undo" class="btn-ghost wide">↶ Ongedaan maken</button>
+
+      <div class="divider"></div>
+
+      <button id="btn-reveal-all" class="btn-primary wide">Onthul alles</button>
+      <button id="btn-next-puzzle" class="btn-ghost wide">Volgende puzzel →</button>
+      <button id="btn-end-session" class="btn-ghost wide">Sessie sluiten</button>
+
+      <div class="divider"></div>
+      <div class="score-summary">
+        <div><span id="score-found">0</span> / <span id="score-total">3</span> gevonden</div>
+        <div class="faint small"><span id="score-wrong">0</span> fout</div>
+      </div>
+      <div id="live-notes" class="live-notes"></div>
+      <details class="shortcuts">
+        <summary>Sneltoetsen</summary>
+        <div><kbd>spatie</kbd> start of pauzeer</div>
+        <div><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> keur dat antwoord goed</div>
+        <div><kbd>x</kbd> fout antwoord</div>
+        <div><kbd>⌘/ctrl</kbd>+<kbd>z</kbd> ongedaan maken</div>
+      </details>
+      <div class="log-box">
+        <h4 class="faint small">Verloop</h4>
+        <div id="live-log" class="log"></div>
+      </div>
+    </aside>
+
+    <main class="answer-panel" id="live-answers"></main>
+  </div>
+</section>
+
+<div class="toast-host" id="toasts"></div>
+<input type="file" id="import-file" accept="application/json,.json" class="hidden">
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "slimste-mens-tool",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Quizmastertool voor de 12-hints-3-antwoorden puzzelronde",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {}
+}

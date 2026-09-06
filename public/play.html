@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Puzzel — speler</title>
+<link rel="stylesheet" href="/base.css">
+<link rel="stylesheet" href="/play.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+</head>
+<body class="player-body">
+
+<!-- Deze pagina ontvangt uitsluitend hintteksten en de klok van de server.
+     Antwoorden, alternatieven en de hint-naar-antwoord koppeling staan hier niet
+     in, en komen pas over de lijn nadat de quizmaster ze onthuld heeft. -->
+
+<main id="join" class="join">
+  <h1>Meedoen</h1>
+  <p class="muted">Vul de code in die je van de quizmaster hebt gekregen.</p>
+  <form id="join-form" autocomplete="off">
+    <input id="join-code" type="text" inputmode="latin" maxlength="6" placeholder="ABC123" aria-label="Spelerscode">
+    <button class="btn-primary" type="submit">Meedoen</button>
+  </form>
+  <p id="join-error" class="join-error" role="alert"></p>
+</main>
+
+<div id="game" class="game hidden">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span id="conn" class="conn" title="Verbinding">●</span>
+      <span id="progress" class="progress">0 / 3</span>
+    </div>
+    <div id="clock" class="clock big-clock">1:00</div>
+    <div class="topbar-right">
+      <span id="status-label" class="status-label">Klaar om te beginnen</span>
+    </div>
+  </header>
+
+  <section id="tiles" class="tiles" aria-label="Hints"></section>
+
+  <section id="answers" class="answers" aria-live="polite"></section>
+
+  <div id="overlay" class="overlay hidden">
+    <div class="overlay-inner">
+      <div id="overlay-title" class="overlay-title"></div>
+      <div id="overlay-sub" class="overlay-sub"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-host" id="toasts"></div>
+<script src="/play.js"></script>
+</body>
+</html>
