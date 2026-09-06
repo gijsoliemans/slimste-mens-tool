@@ -125,6 +125,16 @@ Instelbaar per sessie, met opslaanbare standaardwaarden: totale tijd (standaard
 geschud worden. Bij schudden wordt de volgorde één keer per sessie bepaald en
 daarna vastgezet, zodat er tijdens het spel niets verspringt.
 
+De spelerweergave is opgemaakt in de kleurstijl van de tv-ronde: rode
+achtergrond, donkere panelen met een lichtstrip eronder, grote witte letters, en
+een raster van drie breed en vier hoog. Op een telefoon in portretstand wordt dat
+twee breed. Zodra een antwoord gevonden of onthuld is, kleurt de strip onder zijn
+vier tegels mee, zodat de groepering in één oogopslag te zien is. Bij open tegels
+staat die kleur er niet, en zit hij ook niet in de payload.
+
+De hostweergave is bewust donker en neutraal gebleven: dat is een bedieningspaneel,
+geen decor.
+
 Zolang je de klok niet gestart hebt, ziet de rader een wachtscherm en nog geen
 hints. De statusregel onder de klok herinnert je daaraan.
 
