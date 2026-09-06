@@ -813,7 +813,7 @@ async function action(payload) {
 
 // --- Live: render --------------------------------------------------------
 const LIVE_STATUS = {
-  idle: 'Klaar om te beginnen',
+  idle: 'Klaar om te beginnen — de speler ziet de hints nog niet',
   running: 'De klok loopt',
   paused: 'Gepauzeerd',
   ended: 'Ronde afgelopen'

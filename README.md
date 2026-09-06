@@ -35,6 +35,10 @@ Dit is de eis waar de architectuur op is gekozen. Een puur client-side app kan
 het niet: zodra beide weergaven dezelfde data laden, staan de antwoorden op het
 apparaat van de rader. Daarom is dit een echte server met een strikte scheiding.
 
+- **De hints komen pas bij de start.** Zolang de quizmaster de klok niet gestart
+  heeft, zitten de hintteksten niet in de payload naar de speler. Die ziet een
+  wachtscherm met twaalf lege vakjes, en kan dus niet vast meelezen of de hints
+  fotograferen voordat de tijd loopt. Een reset verbergt ze weer.
 - **De server bepaalt wat de speler krijgt.** `playerView()` in
   [server/game.js](server/game.js) bouwt de spelerpayload van nul op uit de
   hintteksten, de tegelstatus en de klok. Er is geen "verwijder de geheime
@@ -120,6 +124,9 @@ Instelbaar per sessie, met opslaanbare standaardwaarden: totale tijd (standaard
 60 s), tijdbonus per goed antwoord, straftijd per fout antwoord, en of de hints
 geschud worden. Bij schudden wordt de volgorde één keer per sessie bepaald en
 daarna vastgezet, zodat er tijdens het spel niets verspringt.
+
+Zolang je de klok niet gestart hebt, ziet de rader een wachtscherm en nog geen
+hints. De statusregel onder de klok herinnert je daaraan.
 
 Na afloop onthult één knop alle resterende antwoorden inclusief de groepering:
 de tegels krijgen dan pas de kleur van hun antwoord.

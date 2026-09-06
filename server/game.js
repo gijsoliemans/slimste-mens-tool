@@ -158,11 +158,15 @@ function playerView(s) {
   const foundSet = new Set(s.found);
   const showAll = s.revealAll;
 
+  // Voor de start krijgt de speler de hintteksten niet. Ze staan dan dus ook
+  // niet in de payload, zodat er niets vooraf te lezen valt in de devtools.
+  const started = s.status !== 'idle';
+
   const tiles = s.tiles.map((t) => {
     const isRevealed = showAll || revealedSet.has(t.answerId);
     return {
       id: t.id,
-      text: t.text,
+      text: started ? t.text : '',
       state: !isRevealed ? 'open' : (foundSet.has(t.answerId) ? 'found' : 'revealed'),
       // group is uitsluitend gevuld als het antwoord al onthuld is
       group: isRevealed ? groupIndex(s, t.answerId) : null
@@ -182,6 +186,7 @@ function playerView(s) {
   return {
     code: s.code,
     status: s.status,
+    started,
     running: s.status === 'running',
     remainingMs: remainingMs(s),
     totalMs: s.totalMs + s.adjustMs,

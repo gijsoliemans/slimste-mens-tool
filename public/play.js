@@ -65,7 +65,7 @@ setInterval(paintClock, 100);
 
 // --- Render --------------------------------------------------------------
 const STATUS_TEXT = {
-  idle: 'Klaar om te beginnen',
+  idle: 'Wachten op de quizmaster',
   running: 'Speel!',
   paused: 'Gepauzeerd',
   ended: 'Afgelopen'
@@ -95,6 +95,7 @@ function render(state) {
       renderedTiles.set(t.id, el);
     }
     if (el.textContent !== t.text) el.textContent = t.text;
+    el.classList.toggle('pending', !state.started);
     el.style.order = String(index);
     const wasOpen = !el.classList.contains('found') && !el.classList.contains('revealed');
     el.classList.toggle('found', t.state === 'found');
@@ -139,8 +140,10 @@ function render(state) {
     expl.hidden = !a.explanation;
   });
 
-  // Eindscherm
-  if (state.status === 'ended') {
+  // Wachtscherm: de hints zijn er nog niet, en dat is de bedoeling.
+  if (!state.started) {
+    showOverlay('Even geduld', 'De quizmaster start de ronde zo.');
+  } else if (state.status === 'ended') {
     const allFound = state.foundCount === state.answerCount;
     showOverlay(
       allFound ? 'Alles gevonden!' : (state.endedReason === 'time' ? 'Tijd voorbij' : 'Ronde afgelopen'),

@@ -116,6 +116,15 @@
   100% { transform: rotateX(0) scale(.96); }
 }
 
+/* Voor de start: lege plaatshouders. De hintteksten zijn er op dit moment
+   nog helemaal niet, dit is alleen het raster alvast. */
+.tile.pending {
+  background: var(--bg-sunken);
+  border-style: dashed;
+  border-color: var(--line);
+  opacity: .45;
+}
+
 /* Groepskleuren. Deze klassen worden uitsluitend gezet op tegels die al
    onthuld zijn, zodat de speler na afloop ziet welke vier bij elkaar hoorden. */
 .tile.g0 { --group: #ffcc33; }
