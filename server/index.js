@@ -31,7 +31,20 @@ function send(res, status, body, headers = {}) {
     'Content-Length': buf.length,
     'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff',
-    'Referrer-Policy': 'no-referrer'
+    'Referrer-Policy': 'no-referrer',
+    // Alle scripts en stijlen komen van dezelfde origin; er zijn geen inline
+    // scripts. Geinjecteerde code wordt dus sowieso niet uitgevoerd.
+    // 'unsafe-inline' staat alleen bij style-src, voor de style-attributen.
+    'Content-Security-Policy': [
+      "default-src 'self'",
+      "script-src 'self'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data:",
+      "connect-src 'self'",
+      "form-action 'self'",
+      "base-uri 'none'",
+      "frame-ancestors 'none'"
+    ].join('; ')
   }, headers));
   res.end(buf);
 }
@@ -88,7 +101,12 @@ function serveStatic(req, res, pathname) {
   let rel = pathname === '/' ? '/index.html' : pathname;
   if (rel === '/play' || rel.startsWith('/p/')) rel = '/play.html';
   const file = path.join(PUBLIC_DIR, path.normalize(rel).replace(/^(\.\.[/\\])+/, ''));
-  if (!file.startsWith(PUBLIC_DIR)) return send(res, 403, 'Verboden');
+  // Let op de padscheiding: zonder die zou een zustermap als "public-privé"
+  // de controle passeren. Onbereikbaar zoals de route nu loopt, maar dit is
+  // code die anderen forken.
+  if (file !== PUBLIC_DIR && !file.startsWith(PUBLIC_DIR + path.sep)) {
+    return send(res, 403, 'Verboden');
+  }
   fs.readFile(file, (err, data) => {
     if (err) return send(res, 404, 'Niet gevonden', { 'Content-Type': 'text/plain; charset=utf-8' });
     const type = MIME[path.extname(file)] || 'application/octet-stream';

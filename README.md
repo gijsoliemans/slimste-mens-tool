@@ -154,6 +154,22 @@ Alles staat in `data/`:
 Spelsessies staan alleen in het geheugen; die zijn per avond en hoeven een
 herstart niet te overleven.
 
+## Waar deze tool voor bedoeld is
+
+Voor een avond in de huiskamer of over een videocall, op je eigen netwerk. De
+server luistert standaard op `0.0.0.0`, zodat de telefoon van de rader erbij kan;
+beperk dat met `SM_BIND=127.0.0.1` als je alleen op je eigen machine speelt.
+
+Zet hem niet zonder meer open op het internet. Er is geen HTTPS ingebouwd, dus
+het hostwachtwoord zou over een onversleutelde verbinding gaan, en de
+`Secure`-vlag op het cookie wordt alleen gezet als er al HTTPS voor staat. Moet
+het toch over het net, zet er dan een reverse proxy met TLS voor.
+
+De spelerscode is zes tekens uit een alfabet van 32. Wie hem raadt ziet de hints
+van een lopende sessie, nooit de antwoorden of de groepering. Voor de host geldt
+dat niet: die zit achter een wachtwoord met een scrypt-hash, en een mislukte
+poging kost 400 ms, wat gokken onaantrekkelijk maakt.
+
 ## Buiten scope in deze versie
 
 Afbeeldingen of geluid als hint, een speler die antwoorden typt, meerdere spelers
