@@ -175,3 +175,11 @@ poging kost 400 ms, wat gokken onaantrekkelijk maakt.
 Afbeeldingen of geluid als hint, een speler die antwoorden typt, meerdere spelers
 met een buzzer, puntentelling over meerdere rondes, een publieksscherm, en
 automatisch puzzels genereren.
+
+## Licentie
+
+MIT, zie [LICENSE](LICENSE). Gebruik het, pas het aan, deel het.
+
+Dit is een hobbyproject voor het puzzelformaat van de bekende tv-quiz. Het is
+niet verbonden aan of goedgekeurd door de makers of de omroep van dat programma,
+en er zit geen beeldmerk of ander materiaal van hen in.
